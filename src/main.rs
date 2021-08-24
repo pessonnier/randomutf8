@@ -1,3 +1,5 @@
+// a tester avec unee grosse regex https://regex101.com/r/oyp9Fk/3/codegen?language=rust
+
 pub enum UnouInter {
     Un(u32),
     Inter((u32, u32)),
@@ -1189,29 +1191,61 @@ fn main() {
         UnouInter::Inter((0x1FAC0, 0x1FAC2)),
         UnouInter::Inter((0x1FAD0, 0x1FAD6)),
     ];
-
+    //println!("{:?}",char::from_u32(128362));
+    // let mut aff_char = afficheur();
+    let mut x = 1;
+    let mut y = || {
+        x = x + 1;
+        println!("{}", x);
+    };
+    y();
+    let mut cpt = 0u32;
+    let mut aff_char = move |char_code: &u32| {
+        let ch = char::from_u32(*char_code).unwrap();
+        cpt += 1;
+        if cpt % 5 == 0 {
+            println!("{} : {}", char_code, ch)
+        } else {
+            print!("{} : {}", char_code, ch)
+        }
+    };
     for r in ranges.iter() {
         //println!("vec contained {} {}", x, y);
         match r {
             UnouInter::Un(x) => {
-                aff_char(*x);
+                aff_char(x);
             }
-            UnouInter::Inter((x, y)) => list_inter(x, y),
+            UnouInter::Inter((x, y)) => list_inter(x, y, aff_char),
         }
     }
+    println!();
 }
 
-fn aff_char(char_code: u32) {
-    let ch = char::from_u32(char_code).unwrap();
-    if ch != '🖘' {
-        println!("{} : {}", char_code, ch)
-    }
-}
+// fn aff_char(char_code: u32) {
+//     let ch = char::from_u32(char_code).unwrap();
+//     if ch != '🖘' {
+//         println!("{} : {}", char_code, ch)
+//     }
+// }
 
-fn list_inter(x: &u32, y: &u32) {
+fn list_inter(x: &u32, y: &u32, mut traite_char: impl FnMut(&u32)) {
     let deb: u32 = *x;
     let fin: u32 = *y + 1;
     for c in deb..fin {
-        aff_char(c)
+        traite_char(&c)
     }
 }
+
+// fn afficheur() -> impl FnMut(&u32) {
+//     let mut cpt = 0u32;
+//     let mut aff_char = |char_code: &u32| {
+//         let ch = char::from_u32(*char_code).unwrap();
+//         cpt = cpt + 1;
+//         if cpt % 5 == 0 {
+//             println!("{} : {}", char_code, ch)
+//         } else {
+//             print!("{} : {}", char_code, ch)
+//         }
+//     };
+//     aff_char
+// }
