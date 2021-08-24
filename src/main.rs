@@ -1,4 +1,6 @@
 // a tester avec unee grosse regex https://regex101.com/r/oyp9Fk/3/codegen?language=rust
+use rand::seq::SliceRandom;
+use rand::thread_rng;
 
 pub enum UnouInter {
     Un(u32),
@@ -1191,61 +1193,38 @@ fn main() {
         UnouInter::Inter((0x1FAC0, 0x1FAC2)),
         UnouInter::Inter((0x1FAD0, 0x1FAD6)),
     ];
-    //println!("{:?}",char::from_u32(128362));
-    // let mut aff_char = afficheur();
-    let mut x = 1;
-    let mut y = || {
-        x = x + 1;
-        println!("{}", x);
-    };
-    y();
-    let mut cpt = 0u32;
-    let mut aff_char = move |char_code: &u32| {
-        let ch = char::from_u32(*char_code).unwrap();
-        cpt += 1;
-        if cpt % 5 == 0 {
-            println!("{} : {}", char_code, ch)
-        } else {
-            print!("{} : {}", char_code, ch)
-        }
-    };
+    let mut tous = Vec::new();
     for r in ranges.iter() {
-        //println!("vec contained {} {}", x, y);
         match r {
             UnouInter::Un(x) => {
-                aff_char(x);
+                let ch = char::from_u32(*x).unwrap();
+                tous.push(ch);
             }
-            UnouInter::Inter((x, y)) => list_inter(x, y, aff_char),
+            UnouInter::Inter((x, y)) => {
+                let deb: u32 = *x;
+                let fin: u32 = *y + 1;
+                for c in deb..fin {
+                    let ch = char::from_u32(c).unwrap();
+                    tous.push(ch);
+                }
+            }
+        }
+    }
+    let mut cpt = 0u32;
+    for ch in tous.iter() {
+        cpt = cpt + 1;
+        if cpt % 15 == 0 {
+            println!("{} \t", ch)
+        } else {
+            print!("{} \t", ch)
         }
     }
     println!();
-}
-
-// fn aff_char(char_code: u32) {
-//     let ch = char::from_u32(char_code).unwrap();
-//     if ch != '🖘' {
-//         println!("{} : {}", char_code, ch)
-//     }
-// }
-
-fn list_inter(x: &u32, y: &u32, mut traite_char: impl FnMut(&u32)) {
-    let deb: u32 = *x;
-    let fin: u32 = *y + 1;
-    for c in deb..fin {
-        traite_char(&c)
+    let mut rng = &mut rand::thread_rng();
+    let choice = tous.choose_multiple(&mut rng, 12).map(|c| c); //.unwrap();
+                                                                //let mut pwd = Vec::new();
+    for ch in choice {
+        print!("{}", ch)
     }
+    println!();
 }
-
-// fn afficheur() -> impl FnMut(&u32) {
-//     let mut cpt = 0u32;
-//     let mut aff_char = |char_code: &u32| {
-//         let ch = char::from_u32(*char_code).unwrap();
-//         cpt = cpt + 1;
-//         if cpt % 5 == 0 {
-//             println!("{} : {}", char_code, ch)
-//         } else {
-//             print!("{} : {}", char_code, ch)
-//         }
-//     };
-//     aff_char
-// }
