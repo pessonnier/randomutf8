@@ -1,6 +1,7 @@
 // a tester avec unee grosse regex https://regex101.com/r/oyp9Fk/3/codegen?language=rust
 use rand::seq::SliceRandom;
-use rand::thread_rng;
+//use rand::thread_rng;
+use std::iter::FromIterator;
 
 pub enum UnouInter {
     Un(u32),
@@ -1210,21 +1211,38 @@ fn main() {
             }
         }
     }
-    let mut cpt = 0u32;
-    for ch in tous.iter() {
-        cpt = cpt + 1;
-        if cpt % 15 == 0 {
-            println!("{} \t", ch)
-        } else {
-            print!("{} \t", ch)
+
+    use std::env;
+    let args: Vec<String> = env::args().collect();
+
+    if args.len() == 1 {
+        //Vec::len(&args)
+        let mut cpt = 0u32;
+        for ch in tous.iter() {
+            cpt = cpt + 1;
+            if cpt % 15 == 0 {
+                println!("{} \t", ch)
+            } else {
+                print!("{} \t", ch)
+            }
         }
+        println!();
+    } else {
+        let pwdlen: usize = args[1].parse().unwrap();
+        let mut rng = &mut rand::thread_rng();
+        let choice = tous.choose_multiple(&mut rng, pwdlen).map(|c| c);
+        // https://docs.rs/rand/0.6.2/rand/seq/trait.SliceRandom.html#tymethod.choose_multiple
+        //.unwrap();
+        //let mut pwd = Vec::new();
+        //let choice_tmp = choice.map(|c| c.clone()).collect();
+        //let mut pwd_char_moche = Vec::new(); //: Vec<char> = Vec::with_capacity(12);
+        let mut pwd_char: Vec<char> = vec![' '; pwdlen]; //Vec::with_capacity(12);
+        for (pos, ch) in choice.enumerate() {
+            // copie d'un vec avec to_vec ou clone
+            //pwd_char_moche.push(*ch);
+            pwd_char[pos] = *ch;
+        }
+        let pwd = String::from_iter(&pwd_char); // ou pwd_char.iter().collect::<String>() ou iter_into
+        println!("{}", pwd);
     }
-    println!();
-    let mut rng = &mut rand::thread_rng();
-    let choice = tous.choose_multiple(&mut rng, 12).map(|c| c); //.unwrap();
-                                                                //let mut pwd = Vec::new();
-    for ch in choice {
-        print!("{}", ch)
-    }
-    println!();
 }
